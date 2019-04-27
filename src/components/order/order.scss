@@ -1,0 +1,100 @@
+.success {
+  width: 100vw;
+  height: 100vh;
+  background-color:#f5f7f9;
+  
+  &-panel {
+    @include vertical_direction_center();
+    width: 100%;
+    height: 412 / $unit * $symbol;
+    margin: {
+      bottom: 21 / $unit * $symbol;
+    }
+    padding: {
+      top: 78 / $unit * $symbol;
+    }
+    background-color: #fff;
+    .panel-img {
+      width: 141 / $unit * $symbol;
+      height: 141 / $unit * $symbol;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .panel-text {
+      @include vertical_center();
+      height: 90 / $unit * $symbol;
+      font-size: 36 / $unit * $symbol;
+      font-weight: 700;
+      color: #333333;
+    }
+    .panel-tip {
+      font-size: 27 / $unit * $symbol;
+      color: #999999;
+    }
+
+  }
+  &-order {
+    width: 100%;
+    background-color: #fff;
+    .order-title {
+      @include vertical_center();
+      width: 100%;
+      height: 81 / $unit * $symbol;
+      padding: {
+        left: 33 / $unit * $symbol;
+        right: 33 / $unit * $symbol;
+      }
+      span {
+        font-size: 30 / $unit * $symbol;
+        font-weight: 700;
+        color: #000000;
+      }
+    }
+    .order-info {
+      @include vertical_center_horizontal_between();
+      width: 100%;
+      padding: {
+        left: 21 / $unit * $symbol;
+        right: 21 / $unit * $symbol;
+        bottom: 24 / $unit * $symbol;
+      }
+      .info-img {
+        width: 180 / $unit * $symbol;
+        height: 180 / $unit * $symbol;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .info-detail {
+        flex: 1;
+        padding: {
+          // top: 24 / $unit * $symbol;
+          left: 39 / $unit * $symbol;
+          right: 12 / $unit * $symbol;
+        }
+        .detail-name {
+          line-height: 36 / $unit * $symbol;
+          font-size: 27 / $unit * $symbol;
+          font-weight: 700;
+          color: #000000;
+          span:first-of-type {
+            margin: {
+              left: -12 / $unit * $symbol;
+            }
+          }
+        }
+        .detail-price {
+          padding: {
+            top: 45 / $unit * $symbol;
+          }
+          font-size: 36 / $unit * $symbol;
+          font-weight: 700;
+          color: #ea4149;
+        }
+      }
+    }
+  }
+}
