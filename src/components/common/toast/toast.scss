@@ -15,6 +15,7 @@
       left: 30 / $unit * $symbol;
       right: 30 / $unit * $symbol;
     }
+    max-width: 600 / $unit * $symbol;
     font-size: 30 / $unit * $symbol;
     border-radius: 9 / $unit * $symbol;
     background: rgba(17, 17, 17, 0.7);

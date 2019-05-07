@@ -1,7 +1,7 @@
 const mutations = {
 
-  saveToken (state, token) {
-    state.token = token
+  saveCommodityInfo (state, commodityInfo) {
+    state.commodityInfo = commodityInfo
   }
 }
 export default mutations

@@ -1,11 +1,11 @@
 export default class Storage {
   
-  static set token (token) {
-    this.save('token', token)
+  static set commodityInfo (commodityInfo) {
+    this.save('commodityInfo', commodityInfo)
   }
 
-  static get token () {
-    return this.getOut('token')
+  static get commodityInfo () {
+    return this.getOut('commodityInfo')
   }
 
 // 清理缓存

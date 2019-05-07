@@ -1,4 +1,4 @@
 const state = {
-  token: null
+  commodityInfo: null
 }
 export default state

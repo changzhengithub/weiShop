@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://114.55.130.115:8089/udcredit/api/verify/index.do',
+        target: '',
         changeOrigin: true,
         pathRewrite: {
           '^/api':''

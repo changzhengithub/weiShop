@@ -3,18 +3,16 @@
   <section class="index">
     <div class="index-banner">
       <swiper class="banner-swiper" :options="swiperOption" ref="mySwiper">
-        <swiper-slide><img src="../../assets/image/banner.png"></swiper-slide>
-        <swiper-slide><img src="../../assets/image/banner.png"></swiper-slide>
-        <swiper-slide><img src="../../assets/image/banner.png"></swiper-slide>
+        <swiper-slide v-for="(item, index) in bannerList" :key="index"><img :src="item.ReduceFile"></swiper-slide>
         <div class="swiper-pagination"  slot="pagination"></div>
       </swiper>
     </div>
     <div class="index-summary">
       <div class="summary-badge"><span>活动促销</span></div>
-      <p class="summary-title"><span>卡姿兰气场细闪石榴珠红色·润采诱光唇</span> <span>07#石榴朱红</span></p>
+      <p class="summary-title"><span>{{commodityDetail.GoodsTitle}}</span></p>
       <div class="summary-price">
-        <span>￥155</span>
-        <span>已售3581</span>
+        <span>￥{{commodityDetail.SalePrice}}</span>
+        <!-- <span>已售3581</span> -->
       </div>
     </div>
     <div class="index-service">
@@ -43,48 +41,39 @@
         <div class="title-text"><span>商品详情</span></div>
       </div>
       <ul class="detail-photos">
-        <li class="photos-item">
-          <img src="../../assets/image/detail01.png">
-        </li>
-        <li class="photos-item">
-          <img src="../../assets/image/detail02.png">
-        </li>
-        <li class="photos-item">
-          <img src="../../assets/image/detail03.png">
-        </li>
-        <li class="photos-item">
-          <img src="../../assets/image/detail04.png">
+        <li class="photos-item" v-for="(item, index) in commodityDetail.imgs" :key="index">
+          <img :src="item.ReduceFile">
         </li>
       </ul>
-      <div class="detail-tip">
-        <div class="tip-title">
+      <div class="detail-tip" v-html="commodityDetail.GoodsDesc">
+        <!-- <div class="tip-title">
           <span>抢购描述-电话订购请告知客服产品款号</span>
         </div>
         <p class="tip-describe">1.新款色号不做特价活动</p>
         <p class="tip-describe">2.全国包邮，货到付款,7天无理由退换货！</p>
         <p class="tip-describe">3.发现非正品，商家承担来回运费，真正放心购物！</p>
-        <p class="tip-describe"><span>电话订购：</span><span>请拨打在线客服座机0551-5565668或18905585656即可订购。</span></p>
+        <p class="tip-describe"><span>电话订购：</span><span>请拨打在线客服座机0551-5565668或18905585656即可订购。</span></p> -->
       </div>
     </div>
     <div class="index-order" ref="order">
       <div class="order-title"><span>订单信息</span></div>
       <div class="order-info">
-        <div class="info-img"><img src="../../assets/image/detail05.png" alt="商品"></div>
+        <div class="info-img"><img :src="commodityDetail.imgSrc" alt="商品"></div>
         <div class="info-detail">
-          <p class="detail-name"><span>【限时活动】</span><span>气场细闪石榴珠红色·润采诱光唇膏口红</span></p>
-          <p class="detail-price">￥{{paramsIndex != null ? shopInfo.shopParams[paramsIndex].univalence : shopInfo.shopPrice}}</p>
+          <p class="detail-name"><span>【限时活动】</span><span>{{commodityDetail.GoodsTitle}}</span></p>
+          <p class="detail-price">￥{{selectPrice ? selectPrice : commodityDetail.SalePrice}}</p>
         </div>
       </div>
       <div class="order-params">
-        <div class="params-title"><span>色号</span></div>
+        <div class="params-title"><span>参数</span></div>
         <div class="params-list">
-          <div class="list-item" :class="{active: paramsIndex == index}" v-for="(item, index) in shopInfo.shopParams" :key="index" @click="selectParam(index)"><span>{{item.params}}</span></div>
+          <div class="list-item" :class="{active: paramsIndex == index}" v-for="(item, index) in shopParams" :key="index" @click="selectParam(index)"><span>{{item}}</span></div>
         </div>
       </div>
       <div class="order-params">
-        <div class="params-title"><span>尺寸</span></div>
+        <div class="params-title"><span>规格</span></div>
         <div class="params-list">
-          <div class="list-item" :class="{active: sizeIndex == index}" v-for="(item, index) in shopInfo.sizeParamList" :key="index" @click="selectSize(index)"><span>{{item}}</span></div>
+          <div class="list-item" :class="{active: sizeIndex == index}" v-for="(item, index) in specificationList" :key="index" @click="selectSize(index)"><span>{{item}}</span></div>
         </div>
       </div>
       <div class="order-num">
@@ -165,7 +154,9 @@
     </div>
     <div class="index-buy">
       <div class="but-info" v-if="totalNumShow"><span>货到付款：</span><span>￥{{orderNum}}</span></div>
-      <div class="but-right" :class="{active: totalNumShow}" @click="gotoPage('order')"><span>立即购买</span></div>
+      <div class="but-right" :class="{active: totalNumShow}" >
+        <button :disabled="disabledShow" @click="gotoPage">立即购买</button>
+      </div>
     </div>
     <!-- <section class="index-modal">
       <div class="modal-select">
@@ -197,20 +188,20 @@ export default {
         observer:true,//修改swiper自己或子元素时，自动初始化swiper
         observeParents:true,//修改swiper的父元素时，自动初始化swiper
         autoplay : {
-          disableOnInteraction: false,
-          delay: 3000
+          delay:3000
         },
-        observer: true,
-        speed: 300,
+        observer:true,
+        speed:300,
         pagination: {
           el: '.swiper-pagination',
           bulletClass: 'index-pagination-bullet',
           bulletActiveClass: 'index-pagination-bullet-active'
         }
       },
-      receiveName: '',
-      receivePhone: '',
-      receiveAddress: '',
+      userAddress: '',
+      receiveName: '常振',
+      receivePhone: '17763201241',
+      receiveAddress: '顶顶顶顶',
       leaveMessage: '',
       province: '省份',
       city: '城市',
@@ -226,43 +217,23 @@ export default {
       sizeIndex: null,
       sizeParam: '',
       buyNum: 1,
-      shopInfo: {
-        shopName: '卡姿兰气场细闪石榴珠红色·润采诱光唇',
-        shopPrice: '111',
-        shopParams: [
-          {
-            params: '2#橙子慕思橙子慕思',
-            univalence: '155'
-          },{
-            params: '3#橙子慕思',
-            univalence: '156'
-          },{
-            params: '4#慕思',
-            univalence: '157'
-          },{
-            params: '5#橙子慕思',
-            univalence: '158'
-          },{
-            params: '6#橙子慕思',
-            univalence: '159'
-          },{
-            params: '7#橙子慕思橙子慕思',
-            univalence: '160'
-          },{
-            params: '8#橙子',
-            univalence: '152'
-          },{
-            params: '9#橙子慕',
-            univalence: '154'
-          }
-        ],
-        sizeParamList: ['39', '40', '41', '42', '43', '44', '45']
-      },
       orderNum: '',
       telToastShow: false,
       currentTop: 0,
       totalNumShow: false,
-      addressIndex: null
+      addressIndex: null,
+      bannerList: [],
+      commodityDetail: {},
+      commodityModel: [],
+      shopParams: [],
+      specificationList: [],
+      goodsId: '3228F8B0-1B0C-475D-A6DD-D3C62A570BBB',
+      // goodsId: '',
+      goodsColor: '',
+      goodsModel: '',
+      shopPrice: '',
+      selectPrice: '',
+      disabledShow: false
     }
   },
   components: {
@@ -270,46 +241,85 @@ export default {
     swiperSlide
   },
   created () {
-    this.orderNum = this.shopInfo.shopPrice
-    // this.init()
+    this.init()
   },
   mounted () {
   },
   methods: {
     init () {
+      Storage.clear()
+      if (window.commodityId) this.goodsId = window.commodityId
       this.getData()
     },
     getData () {
       Http.send({
-        url: '',
-        data: {}
+        url: 'ShopDetail',
+        data: {
+          goodsId: this.goodsId
+        }
       }).success(data => {
-        this.$router.push({
-          name: page
-        })
-
+        this.disposeData(data)
       }).fail(data => {
-        this.$toast(data.message)
+        Toast({
+          content: data
+        })
       })
     },
+    disposeData (data) {
+      this.bannerList = data.data.banner
+      this.commodityDetail = data.data.detail
+      this.commodityDetail.imgSrc = this.bannerList[0].ReduceFile
+      this.commodityModel = data.data.model
+      this.shopParams = this.commodityModel[0].Colors.slice(1, -1).split(',')
+      this.specificationList = this.commodityModel[0].Models.slice(1, -1).split(',')
+    },
     selectParam (index) {
+      if (this.paramsIndex === index) return
       this.paramsIndex = index
-      this.orderNum = parseInt(this.shopInfo.shopParams[index].univalence) * this.buyNum
-      if (this.sizeIndex !== null) this.totalNumShow = true
+      this.goodsColor = this.shopParams[index]
+      if (!this.goodsModel) return
+      this.getPrice()
     },
     selectSize (index) {
+      if (this.sizeIndex === index) return
       this.sizeIndex = index
-      this.sizeParam = this.shopInfo.sizeParamList[index]
-      if (this.paramsIndex !== null) this.totalNumShow = true
+      this.goodsModel = this.specificationList[index]
+      if (!this.goodsColor) return
+      this.getPrice()
+    },
+    getPrice () {
+      Http.send({
+        url: 'ShopPrice',
+        data: {
+          goodsId: this.goodsId,
+          goodsColor: this.goodsColor,
+          goodsModel: this.goodsModel
+        }
+      }).success(data => {
+        if (!data) {
+          Toast({
+            content: '此商品已售完'
+          })
+          this.sizeIndex = null
+          return
+        }
+        this.selectPrice = data
+        this.orderNum = (this.selectPrice * this.buyNum).toFixed(2)
+        this.totalNumShow = true
+      }).fail(data => {
+        Toast({
+          content: data
+        })
+      })
     },
     cutBuyNum () {
       if (this.buyNum === 1) return
       this.buyNum--
-      if (this.paramsIndex !== null) this.orderNum = parseInt(this.shopInfo.shopParams[this.paramsIndex].univalence) * this.buyNum
+      if (this.selectPrice) this.orderNum = (this.selectPrice * this.buyNum).toFixed(2)
     },
     addBuyNum () {
       this.buyNum++
-      if (this.paramsIndex !== null) this.orderNum = parseInt(this.shopInfo.shopParams[this.paramsIndex].univalence) * this.buyNum
+      if (this.selectPrice) this.orderNum = (this.selectPrice * this.buyNum).toFixed(2)
     },
     telService () {
       this.telToastShow = true
@@ -369,7 +379,7 @@ export default {
       this.areaShow = !this.areaShow
       this.area = area
     },
-    gotoPage (page) {
+    gotoPage () {
       if (this.paramsIndex === null || this.sizeIndex === null) {
         this.scroll()
         Toast({
@@ -397,22 +407,44 @@ export default {
         })
         return
       }
-      if (!this.receiveAddress) return
-      this.$router.replace({
-        name: page
-      })
-      // this.requestOrder()
+      if (!this.receiveAddress) {
+        Toast({
+          content: '请输入详细地址'
+        })
+        return
+      }
+      this.userAddress = this.province + this.city + this.area + this.receiveAddress
+      this.disabledShow = true
+      this.requestOrder()
     },
     requestOrder () {
       Http.send({
-        url: '',
-        data: {}
+        url: 'AddOrder',
+        data: {
+          goodsId: this.goodsId,
+          orderDetail: this.goodsColor + ',' + this.goodsModel,
+          userName: this.receiveName,
+          userPhone: this.receivePhone,
+          userAddr: this.userAddress,
+          userMark: this.leaveMessage
+        }
       }).success(data => {
-        this.$router.push({
-          name: page
+        this.disabledShow = false
+        Toast({
+          content: data.msg
+        })
+        Storage.commodityInfo = {
+          goodTitle: this.commodityDetail.GoodsTitle,
+          imgSrc: this.bannerList[0].ReduceFile,
+          totalNum: this.orderNum
+        }
+        this.$router.replace({
+          name: 'order'
         })
       }).fail(data => {
-        this.$toast(data.message)
+        Toast({
+          content: data
+        })
       })
     },
     scroll () {

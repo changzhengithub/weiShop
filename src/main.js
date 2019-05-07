@@ -7,6 +7,8 @@ import store from './store/index'
 import 'babel-polyfill'
 import Es6Promise from 'es6-promise'
 import fastclick from 'fastclick'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+Vue.use(VueAwesomeSwiper)
 import 'swiper/dist/css/swiper.css'
 // import { Toast } from 'vant'
 // Vue.use(Toast)

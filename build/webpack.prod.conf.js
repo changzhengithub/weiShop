@@ -15,8 +15,7 @@ const env = require('../config/prod.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
   externals:{
-    'vue':'Vue',
-    'vue-awesome-swiper': 'VueAwesomeSwiper'
+    'vue':'Vue'
   },
   module: {
     rules: utils.styleLoaders({
