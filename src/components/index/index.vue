@@ -1,6 +1,6 @@
 <template>
   <!-- s  首页-->
-  <section class="index">
+  <section class="index" ref="index">
     <div class="index-banner">
       <swiper class="banner-swiper" :options="swiperOption" ref="mySwiper">
         <swiper-slide v-for="(item, index) in bannerList" :key="index"><img :src="item.ReduceFile"></swiper-slide>
@@ -105,21 +105,12 @@
           <div class="item-detail">
             <div class="detial-address"  @click="openProvince">
               <div class="address-title" :class="{active: province != '省份'}">{{province}}</div>
-              <div class="address-select" v-if="provinceShow">
-                <div class="select-area" :class="{active: addressIndex == index}" v-for="(province, index) in provinceList" :key="index" @click.stop="getProvince(province, index)"><span>{{province}}</span></div>
-              </div>
             </div>
             <div class="detial-address" @click="openCity">
               <div class="address-title" :class="{active: city != '城市'}">{{city}}</div>
-              <div class="address-select" v-if="cityShow">
-                <div class="select-area" :class="{active: addressIndex == index}" v-for="(city, index) in cityList" :key="index" @click.stop="getCity(city, index)"><span>{{city}}</span></div>
-              </div>
             </div>
             <div class="detial-address" @click="openArea">
               <div class="address-title" :class="{active: area != '区域'}">{{area}}</div>
-              <div class="address-last" v-if="areaShow">
-                <div class="last-area" :class="{active: addressIndex == index}" v-for="(area, index) in areaList" :key="index" @click.stop="getArea(area, index)"><span>{{area}}</span></div>
-              </div>
             </div>
           </div>
         </div>
@@ -158,15 +149,18 @@
         <button :disabled="disabledShow" @click="gotoPage">立即购买</button>
       </div>
     </div>
-    <!-- <section class="index-modal">
+    <section class="index-modal" v-if="provinceShow || cityShow || areaShow" @click="closeModal">
       <div class="modal-select">
         <ul class="select-list">
-          <li class="list-item" :class="{active: false}" v-for="(item, index) in itemList" :key="index" @click.stop="selectItem(item)">
+          <li class="list-item" v-for="(item, index) in itemList" :key="index" @touchstart="touchStart(index)" @touchmove="touchMove" @touchend="touchEnd" @click="selectItem(item, index)">
+            <div class="item-select" :class="{active: selectIndex == index, active2: touchIndex == index}">
+              <div class="select"></div>
+            </div>
             <div class="select-area"><span>{{item}}</span></div>
           </li>
         </ul>
       </div>
-    </section> -->
+    </section>
   </section>
   <!-- e  首页-->
 </template>
@@ -199,9 +193,9 @@ export default {
         }
       },
       userAddress: '',
-      receiveName: '常振',
-      receivePhone: '17763201241',
-      receiveAddress: '顶顶顶顶',
+      receiveName: '',
+      receivePhone: '',
+      receiveAddress: '',
       leaveMessage: '',
       province: '省份',
       city: '城市',
@@ -221,19 +215,26 @@ export default {
       telToastShow: false,
       currentTop: 0,
       totalNumShow: false,
-      addressIndex: null,
       bannerList: [],
       commodityDetail: {},
       commodityModel: [],
       shopParams: [],
       specificationList: [],
-      goodsId: '3228F8B0-1B0C-475D-A6DD-D3C62A570BBB',
-      // goodsId: '',
+      // goodsId: '3228F8B0-1B0C-475D-A6DD-D3C62A570BBB',
+      goodsId: '',
       goodsColor: '',
       goodsModel: '',
       shopPrice: '',
       selectPrice: '',
-      disabledShow: false
+      disabledShow: false,
+      itemList: [],
+      modalShow: false,
+      selectIndex: 0,
+      touchIndex: null,
+      provinceIndex: null,
+      cityIndex: null,
+      areaIndex: null,
+      scrollH: 0
     }
   },
   components: {
@@ -333,28 +334,68 @@ export default {
     sureTel () {
       this.telToastShow = false
     },
+    forbidScroll () {
+      this.scrollH = window.scrollY
+      this.$refs.index.style.position = 'fixed'
+      this.$refs.index.style.top = -this.scrollH + 'px'
+    },
+    recoverScroll () {
+      this.$refs.index.style.position = 'relative'
+      this.$refs.index.style.top = ''
+      window.scrollTo(0, this.scrollH)
+    },
+    closeModal () {
+      this.recoverScroll()
+      this.touchIndex = null
+      this.provinceShow = false
+      this.cityShow = false
+      this.areaShow = false
+    },
+    touchStart (index) {
+      this.touchIndex = index
+    },
+    touchMove () {
+      this.touchIndex = null
+    },
+    touchEnd () {
+      this.touchIndex = null
+    },
+    selectItem (item, index) {
+      this.recoverScroll()
+      if (this.provinceShow) this.getProvince(item, index)
+      if (this.cityShow) this.getCity(item, index)
+      if (this.areaShow) this.getArea(item, index)
+    },
     openProvince () {
-      this.provinceShow = !this.provinceShow
-      this.addressIndex = null
+      this.forbidScroll()
+      this.itemList = this.provinceList
+      this.selectIndex = this.provinceIndex
+      this.provinceShow = true
       this.cityShow = false
       this.areaShow = false
     },
     openCity () {
-      this.cityShow = !this.cityShow
-      this.addressIndex = null
+      this.forbidScroll()
+      this.itemList = this.cityList
+      this.selectIndex = this.cityIndex
+      this.cityShow = true
       this.provinceShow = false
       this.areaShow = false
     },
     openArea () {
-      this.areaShow = !this.areaShow
-      this.addressIndex = null
+      this.forbidScroll()
+      this.itemList = this.areaList
+      this.selectIndex = this.areaIndex
+      this.areaShow = true
       this.provinceShow = false
       this.cityShow = false
     },
     getProvince (province, index) {
-      this.addressIndex = index
       this.provinceShow = false
       if (this.province === province) return
+      this.provinceIndex = index
+      this.cityIndex = null
+      this.areaIndex = null
       this.province = province
       let cityList = []
       for (const key in this.addressList[province]) {
@@ -366,17 +407,19 @@ export default {
       this.area = '区域'
     },
     getCity (city, index) {
-      this.addressIndex = index
-      this.cityShow = !this.cityShow
+      this.cityShow = false
       if (this.city === city) return
       if (city === '城市') return
+      this.cityIndex = index
+      this.areaIndex = null
       this.city = city
       this.areaList = this.addressList[this.province][city] ? this.addressList[this.province][city] : ['区域']
       this.area = '区域'
     },
     getArea (area, index) {
-      this.addressIndex = index
-      this.areaShow = !this.areaShow
+      this.areaShow = false
+      if (area === '区域') return
+      this.areaIndex = index
       this.area = area
     },
     gotoPage () {

@@ -1,5 +1,5 @@
-// import { Toast } from 'vant'
-import Toast from '../components/common/toast/toast.js'
+// import { Toast } import Toast from '../components/common/toast/toast.js'from 'vant'
+
 export default class Check {
   static name (name) {
     name = name ? name.replace(/\s+/g, '') : name

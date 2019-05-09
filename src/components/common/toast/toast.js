@@ -14,4 +14,3 @@ const Toast = function(options = {}) { // 就改了这里，加了个 options �
 }
 
 export default Toast
-
